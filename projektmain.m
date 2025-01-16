@@ -1,9 +1,9 @@
 [x, fs] = audioread('azdokonca.mp3'); %piosenka kolegi do testu 
-[x1,fs1] = audioread("testaudio.m4a"); %głosowka z dyktafonu
-[x2,fs2] = audioread("20hztest.mp3"); %test dzwieku o niskiej czestotliwosci
-[x3,fs3] = audioread("20khztest.mp3"); %test dziweku o wysokiej czestotliwosci
+[x1,fs1] = audioread("testaudio.m4a"); %głosówka z dyktafonu
+[x2,fs2] = audioread("20hztest.mp3"); %test dźwięku o niskiej częstotliwości
+[x3,fs3] = audioread("20khztest.mp3"); %test dźwięku o wysokiej częstotliwości
 
-N = length(x); %długosc wektora x 
+N = length(x); %długość wektora x 
 t = (0:N-1) / fs; %wektor czasu 
 if size(x, 2) > 1 %sprawdzenie czy kanał jest mono czy stereo 
     x = x(:,1);
@@ -28,25 +28,25 @@ if size(x3, 2) > 1
     x3 = x3(:,1);
 end
 
-S = fft(x);
-Stest = S(1:N/2);
-f = fs * (0:N/2-1) / N;
-s = 2 * abs(Stest) / N; 
+S = fft(x); %transformata Fouriera z danego sygnału 
+S = S(1:N/2); %wybieramy wartości dodatnie do wykresu (widmo jednostronne)
+f = fs * (0:N/2-1) / N; %obliczanie częstotliwości jako iloczyn próbek i czestotliwości próbkowania
+s = 2 * abs(S) / N; %amplitudy widm jednostronnych 
 
 S1 = fft(x1);
-S1test = S1(1:N1/2);
+S1 = S1(1:N1/2);
 f1 = fs1 * (0:N1/2-1) / N1;
-s1 = 2 * abs(S1test) / N1;
+s1 = 2 * abs(S1) / N1;
 
 S2 = fft(x2);
-S2test = S2(1:N2/2);
+S2 = S2(1:N2/2);
 f2 = fs2 * (0:N2/2-1) / N2;
-s2 = 2 * abs(S2test) / N2;
+s2 = 2 * abs(S2) / N2;
 
 S3 = fft(x3);
-S3test = S3(1:N3/2);
+S3 = S3(1:N3/2);
 f3 = fs3 * (0:N3/2-1) / N3;
-s3 = 2 * abs(S3test) / N3;
+s3 = 2 * abs(S3) / N3;
 %wykresy dla dzwieku numer 1
 figure
 subplot(4,1,1);
@@ -68,7 +68,7 @@ subplot(4,1,4);
 histogram(x); %histogram
 title("Histogram piosenki")
 
-
+%wykresy dla dźwięku numer 2 (analogicznie jak w 1)
 figure
 subplot(4,1,1);
 plot(t1, x1, 'g');
@@ -88,7 +88,7 @@ ylabel("Częstotliwość (10kHz)");
 subplot(4,1,4);
 histogram(x1);
 title("Histogram sygnału audio - nagrania z dyktafonu")
-
+%wykresy dla dźwięku numer 3 
 figure
 subplot(4,1,1);
 plot(t2, x2, 'g');
@@ -108,7 +108,7 @@ ylabel("Częstotliwość (10kHz)");
 subplot(4,1,4);
 histogram(x2);
 title("Histogram sygnału audio o częstotliwości 20Hz")
-
+%wykresy dla dźwięku numer 4
 figure
 subplot(4,1,1);
 plot(t3, x3, 'g');
