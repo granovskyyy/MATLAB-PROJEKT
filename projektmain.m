@@ -5,7 +5,7 @@
 
 N = length(x); %długość wektora x 
 t = (0:N-1) / fs; %wektor czasu 
-if size(x, 2) > 1 %sprawdzenie czy kanał jest mono czy stereo 
+if size(x, 2) > 1 %sprawdzenie czy kanał jest mono czy stereo (wybranie jednej kolumny do dalszej analizy)
     x = x(:,1);
 end
 
@@ -28,7 +28,7 @@ if size(x3, 2) > 1
     x3 = x3(:,1);
 end
 
-S = fft(x); %transformata Fouriera z danego sygnału 
+S = fft(x); %transformata Fouriera z danego sygnału przy pomocy funkcji wbudowanej w raporcie (opisane w raporcie)
 S = S(1:N/2); %wybieramy wartości dodatnie do wykresu (widmo jednostronne)
 f = fs * (0:N/2-1) / N; %obliczanie częstotliwości jako iloczyn próbek i czestotliwości próbkowania
 s = 2 * abs(S) / N; %amplitudy widm jednostronnych 
@@ -47,25 +47,31 @@ S3 = fft(x3);
 S3 = S3(1:N3/2);
 f3 = fs3 * (0:N3/2-1) / N3;
 s3 = 2 * abs(S3) / N3;
+
+w=hanning(N,'periodic'); % wyliczanie okien do periodogramu za pomocą funckji wbudowanej hamming (dokładnie opisana w raporcie)
+w1=hanning(N1,'periodic');
+w2=hanning(N2,'periodic');
+w3=hanning(N3,'periodic');
+
 %wykresy dla dzwieku numer 1
 figure
 subplot(4,1,1);
-plot(t, x, 'g'); %dziedzina czasu 
+plot(t, x, 'g'); %dziedzina czasu (x- czas, y - wektor sygnału audio pobrany przy pomocy audioread)
 xlabel('Czas (s)');
 ylabel('Amplituda');
 title('Analiza sygnału audio - piosenki w dziedzinie czasu');
 subplot(4,1,2);
-plot(f, s, 'b');  %dziedzina czestotliwosci 
+plot(f, s, 'b');  %dziedzina czestotliwosci (x- częstotliwość, y - widma jednostronne sygnału)
 xlabel('Częstotliwość (10kHz)');
 ylabel('Amplituda');
 title('Analiza sygnału audio - piosenki w dziedzinie częstotliwości');
 subplot(4,1,3);
-spectrogram(x, 1024, 512, 1024, fs, 'yaxis');   %spektogram 
+spectrogram(x, 1024, 512, 1024, fs, 'yaxis');   % %spektrogram sygnału (działanie funckji dokładnie opisane w raporcie) 
 title("Spektrogram piosenki");
 xlabel("Czas (s)");
 ylabel("Częstotliwość (10kHz)");
 subplot(4,1,4);
-histogram(x); %histogram
+histogram(x); %histogram (działanie opisane w raporcie)
 title("Histogram piosenki")
 
 %wykresy dla dźwięku numer 2 (analogicznie jak w 1)
@@ -128,3 +134,26 @@ ylabel("Częstotliwość (10kHz)");
 subplot(4,1,4);
 histogram(x3);
 title("Histogram sygnału audio o częstotliwości 20kHz")
+
+%periodogramy wszystkich sygnałów audio
+figure 
+subplot(2,2,1)
+periodogram(x,w,N,fs,'power'); %periodogram sygnału (działanie i zastosowania opisane w raporcie)
+title("Periodogram sygnału audio - piosenka")
+xlabel ("Częstotliwość");
+ylabel ("Moc sygnału");
+subplot(2,2,2)
+periodogram(x1,w1,N1,fs1,'power');
+title("Periodogram sygnału audio - nagranie z dyktafonuw")
+xlabel ("Częstotliwość");
+ylabel ("Moc sygnału");
+subplot(2,2,3)
+periodogram(x2,w2,N2,fs2,'power');
+title("Periodogram sygnału audio - sygnał audio o częstotliwości 20Hz")
+xlabel ("Częstotliwość");
+ylabel ("Moc sygnału");
+subplot(2,2,4)
+periodogram(x3,w3,N3,fs3,'power');
+title("Periodogram sygnału audio - sygnał audio o częstotliwości 20kHz")
+xlabel ("Częstotliwość");
+ylabel ("Moc sygnału");
